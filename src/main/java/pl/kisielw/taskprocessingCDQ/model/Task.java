@@ -28,9 +28,6 @@ public class Task {
 
     private Double result;
 
-    @OneToOne
-    private InputParams inputParams;
-
     @Override
     public String toString() {
         return "Task{" +
