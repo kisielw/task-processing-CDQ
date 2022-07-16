@@ -1,12 +1,22 @@
 package pl.kisielw.taskprocessingCDQ.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
 
 @Entity
+@Data
+@NoArgsConstructor
 public class Task {
+
+    @Builder
+    public Task(String status, String progress, Double result) {
+        this.status = status;
+        this.progress = progress;
+        this.result = result;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,5 +26,18 @@ public class Task {
 
     private String progress;
 
-    private Long result;
+    private Double result;
+
+    @OneToOne
+    private InputParams inputParams;
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "id=" + id +
+                ", status='" + status + '\'' +
+                ", progress='" + progress + '\'' +
+                ", result=" + result +
+                '}';
+    }
 }
