@@ -28,7 +28,7 @@ public class TaskServiceImpl implements TaskService {
     public Task save(InputParams inputParams) {
         inputParamsRepository.save(inputParams);
 
-        Task task = getTask();
+        Task task = getTaskWithGeneratedId();
 
         Double result = Math.pow(inputParams.getBase(), inputParams.getExponent());
 
@@ -74,7 +74,7 @@ public class TaskServiceImpl implements TaskService {
         return tasks;
     }
 
-    private Task getTask() {
+    private Task getTaskWithGeneratedId() {
         Task task = new Task();
         Task savedTask = taskRepository.save(task);
         task.setId(savedTask.getId());
