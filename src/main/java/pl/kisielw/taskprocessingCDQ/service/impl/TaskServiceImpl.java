@@ -10,6 +10,7 @@ import pl.kisielw.taskprocessingCDQ.repository.TaskRepository;
 import pl.kisielw.taskprocessingCDQ.thread.ThreadById;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -51,6 +52,17 @@ public class TaskServiceImpl implements TaskService {
         } else
         return taskRepository.findById(id).orElseThrow();
 
+    }
+
+    @Override
+    public List<Task> getAll() {
+        List<Task> tasks = taskRepository.findAll();
+        for (Task task : tasks) {
+            if (!(task.getStatus() == "finished")) {
+                task = getById(task.getId());
+            }
+        }
+        return tasks;
     }
 
 

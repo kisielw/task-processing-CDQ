@@ -24,6 +24,7 @@ public class TaskController {
         return taskService.save(inputParams);
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/api/tasks/{id}")
     public Task getTaskById(@PathVariable Integer id) {
         return taskService.getById(id);
@@ -32,6 +33,6 @@ public class TaskController {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/api/tasks")
     public List<Task> getTasks() {
-        throw new IllegalArgumentException("Not implemented yet");
+        return taskService.getAll();
     }
 }
