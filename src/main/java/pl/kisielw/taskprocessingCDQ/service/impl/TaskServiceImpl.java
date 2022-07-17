@@ -41,6 +41,10 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Task getById(Integer id) {
+        if (!(taskRepository.existsById(id))) {
+            return null;
+        }
+
         ThreadById threadById = threads.get(id);
 
         if (threadById.getState() == Thread.State.TERMINATED) {
@@ -55,7 +59,6 @@ public class TaskServiceImpl implements TaskService {
         } else {
             return taskRepository.findById(id).orElseThrow();
         }
-
     }
 
     @Override
