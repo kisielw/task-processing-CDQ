@@ -20,18 +20,21 @@ public class TaskController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/api/tasks")
     public Task createTask(@RequestBody InputParams inputParams) {
+        log.info("Created task with params: " + inputParams);
         return taskService.save(inputParams);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/api/tasks/{id}")
     public Task getTaskById(@PathVariable Integer id) {
+        log.info("Return task with id: " + id);
         return taskService.getById(id);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/api/tasks")
     public List<Task> getTasks() {
+        log.info("Return all tasks");
         return taskService.getAll();
     }
 }
