@@ -21,7 +21,7 @@ public class ThreadById {
 
     final private static Long executeTaskThreadSleep = 20000L;
 
-    final private static Long ratioOfSleepTimes = executeTaskThreadSleep/counterTimeSleep;
+    final private static Long ratioOfSleepTimes = executeTaskThreadSleep / counterTimeSleep;
 
     public ThreadById(Task task, Double result, TaskRepository taskRepository) {
         this.task = task;
@@ -31,34 +31,42 @@ public class ThreadById {
 
     //TODO poszukać dokładniejszego sposobu na zliczanie czasu
     private Thread counterTimeThread = new Thread(() -> {
-        runningTime = Long.valueOf(0);
+        runningTime = 0L;
+
         while (true) {
             try {
                 Thread.sleep(counterTimeSleep);
-            } catch(InterruptedException exc) {
+            } catch (InterruptedException exc) {
                 log.info("Task: " + task + " is executed");
                 return;
             }
             runningTime++;
-    }});
+        }
+    });
 
-    private Thread thread = new Thread(() ->{
+    private Thread thread = new Thread(() -> {
         counterTimeThread.start();
+
         try {
             Thread.sleep(executeTaskThreadSleep);
         } catch (InterruptedException e) {
             //TODO obsłużyć, jeśli jest możliwość
             throw new RuntimeException(e);
         }
+
+        fillFieldsInTask();
+        counterTimeThread.interrupt();
+    });
+
+    private void fillFieldsInTask() {
         task.setResult(result);
         task.setProgress("100%");
         task.setStatus("finished");
         taskRepository.save(task);
-        counterTimeThread.interrupt();
-    });
+    }
 
     public String getProgress() {
-        Long progress = 100 * this.runningTime/(ratioOfSleepTimes);
+        Long progress = 100 * this.runningTime / (ratioOfSleepTimes);
         return progress + "%";
     }
 

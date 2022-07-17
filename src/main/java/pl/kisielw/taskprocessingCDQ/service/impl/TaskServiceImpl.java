@@ -22,47 +22,60 @@ public class TaskServiceImpl implements TaskService {
     @Autowired
     private InputParamsRepository inputParamsRepository;
 
-    private Map<Integer, ThreadById> threads = new HashMap<>();
+    final private Map<Integer, ThreadById> threads = new HashMap<>();
 
     @Override
     public Task save(InputParams inputParams) {
-
         inputParamsRepository.save(inputParams);
-        Task task = new Task();
-        Task savedTask = taskRepository.save(task);
-        task.setId(savedTask.getId());
+
+        Task task = getTask();
+
         Double result = Math.pow(inputParams.getBase(), inputParams.getExponent());
+
         ThreadById threadById = new ThreadById(task, result, taskRepository);
         threads.put(threadById.getId(), threadById);
         threadById.start();
+
         return task;
     }
 
     @Override
     public Task getById(Integer id) {
         ThreadById threadById = threads.get(id);
+
         if (threadById.getState() == Thread.State.TERMINATED) {
             return taskRepository.findById(id).orElseThrow();
         }
+
         if (threadById.getState() == Thread.State.TIMED_WAITING) {
             Task task = taskRepository.findById(id).orElseThrow();
             task.setStatus("running");
             task.setProgress(threadById.getProgress());
             return task;
-        } else
-        return taskRepository.findById(id).orElseThrow();
+        } else {
+            return taskRepository.findById(id).orElseThrow();
+        }
 
     }
 
     @Override
     public List<Task> getAll() {
         List<Task> tasks = taskRepository.findAll();
+
         for (Task task : tasks) {
             if (!(task.getStatus() == "finished")) {
                 task = getById(task.getId());
             }
         }
+
         return tasks;
+    }
+
+    private Task getTask() {
+        Task task = new Task();
+        Task savedTask = taskRepository.save(task);
+        task.setId(savedTask.getId());
+        return task;
     }
 
 

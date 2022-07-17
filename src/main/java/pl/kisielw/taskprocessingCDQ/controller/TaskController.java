@@ -8,7 +8,6 @@ import pl.kisielw.taskprocessingCDQ.service.TaskService;
 import pl.kisielw.taskprocessingCDQ.model.InputParams;
 import pl.kisielw.taskprocessingCDQ.model.Task;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
 
 @RestController
