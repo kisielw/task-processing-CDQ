@@ -66,7 +66,7 @@ public class TaskServiceImpl implements TaskService {
         List<Task> tasks = taskRepository.findAll();
 
         for (Task task : tasks) {
-            if (!(task.getStatus().equals("finished"))) {
+            if (!(task.getStatus() == "finished")) {
                 task = getById(task.getId());
             }
         }
@@ -80,6 +80,5 @@ public class TaskServiceImpl implements TaskService {
         task.setId(savedTask.getId());
         return task;
     }
-
 
 }

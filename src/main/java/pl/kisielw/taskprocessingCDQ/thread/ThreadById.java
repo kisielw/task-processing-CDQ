@@ -15,13 +15,9 @@ public class ThreadById {
 
     private TaskRepository taskRepository;
 
-    private Long runningTime;
-
-    final private static Long counterTimeSleep = 1000L;
+    private Long startTaskTime;
 
     final private static Long executeTaskThreadSleep = 20000L;
-
-    final private static Long ratioOfSleepTimes = executeTaskThreadSleep / counterTimeSleep;
 
     public ThreadById(Task task, Double result, TaskRepository taskRepository) {
         this.task = task;
@@ -29,23 +25,8 @@ public class ThreadById {
         this.taskRepository = taskRepository;
     }
 
-    //TODO poszukać dokładniejszego sposobu na zliczanie czasu
-    private Thread counterTimeThread = new Thread(() -> {
-        runningTime = 0L;
-
-        while (true) {
-            try {
-                Thread.sleep(counterTimeSleep);
-            } catch (InterruptedException exc) {
-                log.info("Task: " + task + " is executed");
-                return;
-            }
-            runningTime++;
-        }
-    });
-
     private Thread thread = new Thread(() -> {
-        counterTimeThread.start();
+        startTimeRunningTask();
 
         try {
             Thread.sleep(executeTaskThreadSleep);
@@ -54,8 +35,15 @@ public class ThreadById {
         }
 
         fillFieldsInTask();
-        counterTimeThread.interrupt();
     });
+
+    private void startTimeRunningTask() {
+        startTaskTime = System.nanoTime();
+    }
+
+    private Long getRunningTaskTime() {
+        return System.nanoTime() - startTaskTime;
+    }
 
     private void fillFieldsInTask() {
         task.setResult(result);
@@ -65,7 +53,7 @@ public class ThreadById {
     }
 
     public String getProgress() {
-        Long progress = 100 * this.runningTime / (ratioOfSleepTimes);
+        Long progress = (100 * getRunningTaskTime()) / (1000000 * executeTaskThreadSleep);
         return progress + "%";
     }
 
