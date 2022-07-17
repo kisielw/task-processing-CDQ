@@ -50,8 +50,7 @@ public class ThreadById {
         try {
             Thread.sleep(executeTaskThreadSleep);
         } catch (InterruptedException e) {
-            //TODO obsłużyć, jeśli jest możliwość
-            throw new RuntimeException(e);
+            log.warn("New task with id: " + task.getId() + " didn't execute");
         }
 
         fillFieldsInTask();

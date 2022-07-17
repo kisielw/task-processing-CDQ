@@ -66,7 +66,7 @@ public class TaskServiceImpl implements TaskService {
         List<Task> tasks = taskRepository.findAll();
 
         for (Task task : tasks) {
-            if (!(task.getStatus() == "finished")) {
+            if (!(task.getStatus().equals("finished"))) {
                 task = getById(task.getId());
             }
         }
