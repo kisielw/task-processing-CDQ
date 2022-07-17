@@ -6,5 +6,4 @@ import pl.kisielw.taskprocessingCDQ.model.Task;
 
 public interface TaskRepository extends JpaRepository<Task, Integer> {
 
-    Task findByInputParams(InputParams inputParams);
 }

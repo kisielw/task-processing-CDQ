@@ -5,4 +5,6 @@ import pl.kisielw.taskprocessingCDQ.model.Task;
 
 public interface TaskService {
     Task save(InputParams inputParams);
+
+    Task getById(Integer id);
 }

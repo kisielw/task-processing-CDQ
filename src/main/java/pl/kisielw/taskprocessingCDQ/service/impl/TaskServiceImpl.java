@@ -7,6 +7,10 @@ import pl.kisielw.taskprocessingCDQ.model.InputParams;
 import pl.kisielw.taskprocessingCDQ.model.Task;
 import pl.kisielw.taskprocessingCDQ.repository.InputParamsRepository;
 import pl.kisielw.taskprocessingCDQ.repository.TaskRepository;
+import pl.kisielw.taskprocessingCDQ.thread.ThreadById;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -17,31 +21,36 @@ public class TaskServiceImpl implements TaskService {
     @Autowired
     private InputParamsRepository inputParamsRepository;
 
+    private Map<Integer, ThreadById> threads = new HashMap<>();
+
     @Override
     public Task save(InputParams inputParams) {
 
         inputParamsRepository.save(inputParams);
-        Double result = Math.pow(inputParams.getBase(), inputParams.getExponent());
         Task task = new Task();
-        task.setInputParams(inputParams);
-
-        taskRepository.save(task);
-        task.setId(taskRepository.findByInputParams(inputParams).getId());
-
-        Thread thread = new Thread(() ->{
-            try {
-                Thread.sleep(20000);
-            } catch (InterruptedException e) {
-                //TODO obsłużyć, jeśli jest możliwość
-                throw new RuntimeException(e);
-            }
-            task.setResult(result);
-            task.setProgress("100%");
-            task.setStatus("finished");
-            taskRepository.save(task);
-        });
-        thread.start();
+        Task savedTask = taskRepository.save(task);
+        task.setId(savedTask.getId());
+        Double result = Math.pow(inputParams.getBase(), inputParams.getExponent());
+        ThreadById threadById = new ThreadById(task, result, taskRepository);
+        threads.put(threadById.getId(), threadById);
+        threadById.start();
         return task;
+    }
+
+    @Override
+    public Task getById(Integer id) {
+        ThreadById threadById = threads.get(id);
+        if (threadById.getState() == Thread.State.TERMINATED) {
+            return taskRepository.findById(id).orElseThrow();
+        }
+        if (threadById.getState() == Thread.State.TIMED_WAITING) {
+            Task task = taskRepository.findById(id).orElseThrow();
+            task.setStatus("running");
+            task.setProgress(threadById.getProgress());
+            return task;
+        } else
+        return taskRepository.findById(id).orElseThrow();
+
     }
 
 
