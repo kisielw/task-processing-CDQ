@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import pl.kisielw.taskprocessingCDQ.service.TaskService;
 import pl.kisielw.taskprocessingCDQ.model.InputParams;
 import pl.kisielw.taskprocessingCDQ.model.Task;
-import pl.kisielw.taskprocessingCDQ.repository.InputParamsRepository;
 import pl.kisielw.taskprocessingCDQ.repository.TaskRepository;
 import pl.kisielw.taskprocessingCDQ.thread.ThreadById;
 
@@ -19,15 +18,10 @@ public class TaskServiceImpl implements TaskService {
     @Autowired
     private TaskRepository taskRepository;
 
-    @Autowired
-    private InputParamsRepository inputParamsRepository;
-
     final private Map<Integer, ThreadById> threads = new HashMap<>();
 
     @Override
     public Task save(InputParams inputParams) {
-        inputParamsRepository.save(inputParams);
-
         Task task = getTaskWithGeneratedId();
 
         Double result = Math.pow(inputParams.getBase(), inputParams.getExponent());
