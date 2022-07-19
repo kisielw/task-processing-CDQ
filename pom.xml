@@ -57,7 +57,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
-		<finalName>task-processing-CDQ</finalName>
+		<finalName>task-processing</finalName>
 	</build>
 
 </project>
